@@ -1,6 +1,6 @@
 plugins {
     java
-    id("com.github.johnrengelman.shadow") version "7.1.2"
+    id("com.github.johnrengelman.shadow") version "9.0.0-rc1"
 }
 
 group = "com.tcoded"
@@ -22,6 +22,14 @@ dependencies {
 
 tasks.withType<JavaCompile> {
     options.release.set(17)
+}
+
+tasks.jar {
+    archiveClassifier = "raw"
+}
+
+tasks.shadowJar {
+    archiveClassifier.set("")
 }
 
 tasks {
