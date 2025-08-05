@@ -30,6 +30,7 @@ tasks.jar {
 
 tasks.shadowJar {
     archiveClassifier.set("")
+    relocate("com.tcoded.folialib", "com.tcoded.killstreak.folialib")
 }
 
 tasks {
