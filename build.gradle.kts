@@ -1,6 +1,6 @@
 plugins {
     java
-    id("com.github.johnrengelman.shadow") version "9.0.0-rc1"
+    id("com.gradleup.shadow") version "9.0.0-rc1"
 }
 
 group = "com.tcoded"
