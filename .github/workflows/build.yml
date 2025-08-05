@@ -1,0 +1,65 @@
+name: Build
+
+permissions:
+  contents: write
+
+on:
+  push:
+    branches: ["main"]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Build with Gradle
+        run: ./gradlew build --no-daemon
+
+      - name: Read project version
+        id: get_version
+        run: echo "version=$(grep '^version' build.gradle* | cut -d'=' -f2 | tr -d '[:space:]\"')" >> $GITHUB_OUTPUT
+
+      - name: Find built Jar
+        id: find_jar
+        run: |
+          full_path=$(ls build/libs/KillStreak-*.jar | grep -v '\-raw\.jar$')
+          file_name=$(basename "$full_path")
+          echo "jar_path=$full_path" >> $GITHUB_OUTPUT
+          echo "jar_file=$file_name" >> $GITHUB_OUTPUT
+
+      - name: Get short commit SHA
+        id: get_sha
+        run: echo "short_sha=${GITHUB_SHA::7}" >> $GITHUB_OUTPUT
+
+      - name: Create GitHub Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+        with:
+          tag_name: v${{ steps.get_version.outputs.version }}-${{ steps.get_sha.outputs.short_sha }}
+          release_name: Release v${{ steps.get_version.outputs.version }}-${{ steps.get_sha.outputs.short_sha }}
+          body: Automated build for v${{ steps.get_version.outputs.version }} (commit ${{ steps.get_sha.outputs.short_sha }})
+          draft: false
+          prerelease: false
+
+      - name: Upload Jar to Release
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ${{ steps.find_jar.outputs.jar_path }}
+          asset_name: ${{ steps.find_jar.outputs.jar_file }}
+          asset_content_type: application/java-archive
+
