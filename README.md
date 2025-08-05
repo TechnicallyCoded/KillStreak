@@ -1,4 +1,9 @@
 # KillStreak
 
-Simple plugin which tracks kills and losses in 1.21+  
-Advantage over other resources: lightweight, simple, and well designed 
+Simple kill streak tracking plugin for modern Minecraft servers.
+
+## Features
+- Tracks player kills and deaths
+- Stores data asynchronously using FoliaLib
+- Provides `%killstreak_killstreak%` PlaceholderAPI placeholder
+- Lightweight and easy to configure

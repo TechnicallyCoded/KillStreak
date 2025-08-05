@@ -1,0 +1,7 @@
+name: KillStreak
+version: 1.0.0
+main: com.tcoded.killstreak.KillStreak
+api-version: 1.20
+author: tcoded
+folia-supported: true
+softdepend: [PlaceholderAPI]

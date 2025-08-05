@@ -1,0 +1,31 @@
+plugins {
+    java
+    id("com.github.johnrengelman.shadow") version "7.1.2"
+}
+
+group = "com.tcoded"
+version = "1.0.0"
+
+repositories {
+    mavenCentral()
+    maven("https://repo.papermc.io/repository/maven-public/")
+    maven("https://repo.extendedclip.com/content/repositories/placeholderapi/")
+    maven("https://repo.tcoded.com/releases")
+}
+
+dependencies {
+    compileOnly("org.spigotmc:spigot-api:1.20.1-R0.1-SNAPSHOT")
+    compileOnly("me.clip:placeholderapi:2.11.5")
+    implementation("com.tcoded:FoliaLib:0.5.1")
+    implementation("com.google.code.gson:gson:2.10.1")
+}
+
+tasks.withType<JavaCompile> {
+    options.release.set(17)
+}
+
+tasks {
+    build {
+        dependsOn(shadowJar)
+    }
+}
