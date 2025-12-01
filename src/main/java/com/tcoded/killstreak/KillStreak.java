@@ -1,6 +1,7 @@
 package com.tcoded.killstreak;
 
 import com.tcoded.folialib.FoliaLib;
+import com.tcoded.killstreak.command.KillStreakCommand;
 import com.tcoded.killstreak.data.PlayerDataManager;
 import com.tcoded.killstreak.listener.KillListener;
 import com.tcoded.killstreak.listener.PlayerConnectionListener;
@@ -36,10 +37,14 @@ public class KillStreak extends JavaPlugin {
     public void onEnable() {
         this.foliaLib = new FoliaLib(this);
         this.dataManager = new PlayerDataManager(getDataFolder());
+        // Save default config
+        saveDefaultConfig();
 
         PluginManager pm = getServer().getPluginManager();
         pm.registerEvents(new KillListener(dataManager), this);
         pm.registerEvents(new PlayerConnectionListener(this, dataManager), this);
+        // Register /ks command
+        this.getCommand("ks").setExecutor(new KillStreakCommand(this));
 
         if (pm.isPluginEnabled("PlaceholderAPI")) {
             this.expansion = new KillStreakExpansion(this, dataManager);

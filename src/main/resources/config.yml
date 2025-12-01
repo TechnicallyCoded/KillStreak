@@ -1,0 +1,4 @@
+# Default configuration for KillStreak plugin
+messages:
+  killstreak: '&aYour current killstreak is {killstreak}!'
+
