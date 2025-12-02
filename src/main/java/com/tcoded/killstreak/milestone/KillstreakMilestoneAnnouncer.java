@@ -49,10 +49,10 @@ public class KillstreakMilestoneAnnouncer {
 
     private void broadcast(Player player, int killCount, String template) {
         String parsedTemplate = PlaceholderUtil.parsePlaceholders(player, template);
+        String filledTemplate = parsedTemplate.replace("{killstreak}", String.valueOf(killCount));
         Component message = miniMessage.deserialize(
-                parsedTemplate,
-                Placeholder.parsed("player", player.getName()),
-                Placeholder.parsed("killstreak", String.valueOf(killCount))
+                filledTemplate,
+                Placeholder.parsed("player", player.getName())
         );
         broadcastToPlayers(message);
     }
@@ -74,7 +74,7 @@ public class KillstreakMilestoneAnnouncer {
                 continue;
             }
             String parsedReward = PlaceholderUtil.parsePlaceholders(player, reward);
-            String filledReward = parsedReward.replace("<killstreak>", String.valueOf(killCount));
+            String filledReward = parsedReward.replace("{killstreak}", String.valueOf(killCount));
             Bukkit.dispatchCommand(console, filledReward);
         }
     }
