@@ -4,7 +4,6 @@ import com.tcoded.killstreak.util.PlaceholderUtil;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -18,7 +17,6 @@ public class KillstreakMilestoneAnnouncer {
 
     private final List<KillstreakMilestone> milestones;
     private final MiniMessage miniMessage;
-    private final LegacyComponentSerializer legacySerializer;
 
     /**
      * @param milestones configured milestones
@@ -26,7 +24,6 @@ public class KillstreakMilestoneAnnouncer {
     public KillstreakMilestoneAnnouncer(List<KillstreakMilestone> milestones) {
         this.milestones = milestones;
         this.miniMessage = MiniMessage.miniMessage();
-        this.legacySerializer = LegacyComponentSerializer.legacySection();
     }
 
     /**
@@ -61,9 +58,8 @@ public class KillstreakMilestoneAnnouncer {
     }
 
     private void broadcastToPlayers(Component message) {
-        String legacyMessage = legacySerializer.serialize(message);
         for (Player online : Bukkit.getOnlinePlayers()) {
-            online.sendMessage(legacyMessage);
+            online.sendMessage(message);
         }
     }
 
