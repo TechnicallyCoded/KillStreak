@@ -1,4 +1,7 @@
 # Default configuration for KillStreak plugin
 messages:
   killstreak: '&aYour current killstreak is {killstreak}!'
+killstreak-milestones:
+  - kills: 5
+    message: '<green><player></green> is on a <yellow><killstreak></yellow> killstreak!'
 
