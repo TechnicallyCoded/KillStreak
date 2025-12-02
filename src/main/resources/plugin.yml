@@ -10,3 +10,6 @@ commands:
     description: "Show your current killstreak."
     aliases: ["killstreak"]
     usage: "/<command>"
+  selftestkillstreaks:
+    description: "Run the killstreak plugin self-test (OP only)."
+    usage: "/<command>"

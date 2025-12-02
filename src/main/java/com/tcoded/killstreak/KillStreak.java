@@ -6,6 +6,7 @@ import com.tcoded.killstreak.data.PlayerDataManager;
 import com.tcoded.killstreak.listener.KillListener;
 import com.tcoded.killstreak.listener.PlayerConnectionListener;
 import com.tcoded.killstreak.placeholder.KillStreakExpansion;
+import com.tcoded.killstreak.test.SelfTestCommand;
 import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -45,6 +46,8 @@ public class KillStreak extends JavaPlugin {
         pm.registerEvents(new PlayerConnectionListener(this, dataManager), this);
         // Register /ks command
         this.getCommand("ks").setExecutor(new KillStreakCommand(this));
+        // Register /selftestkillstreaks command
+        this.getCommand("selftestkillstreaks").setExecutor(new SelfTestCommand(this));
 
         if (pm.isPluginEnabled("PlaceholderAPI")) {
             this.expansion = new KillStreakExpansion(this, dataManager);
