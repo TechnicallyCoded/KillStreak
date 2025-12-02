@@ -2,6 +2,8 @@
 messages:
   killstreak: '&aYour current killstreak is {killstreak}!'
 killstreak-milestones:
-  - kills: 5
+  first-example:
+    streak: 5
     message: '<green><player></green> is on a <yellow><killstreak></yellow> killstreak!'
-
+    rewards:
+      - "give %player_name% diamond 1"

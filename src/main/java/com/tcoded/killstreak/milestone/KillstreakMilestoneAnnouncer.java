@@ -1,10 +1,12 @@
 package com.tcoded.killstreak.milestone;
 
+import com.tcoded.killstreak.util.PlaceholderUtil;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.List;
@@ -43,13 +45,15 @@ public class KillstreakMilestoneAnnouncer {
                 continue;
             }
             broadcast(player, killCount, milestone.message());
+            reward(player, killCount, milestone.rewards());
             return;
         }
     }
 
     private void broadcast(Player player, int killCount, String template) {
+        String parsedTemplate = PlaceholderUtil.parsePlaceholders(player, template);
         Component message = miniMessage.deserialize(
-                template,
+                parsedTemplate,
                 Placeholder.parsed("player", player.getName()),
                 Placeholder.parsed("killstreak", String.valueOf(killCount))
         );
@@ -60,6 +64,22 @@ public class KillstreakMilestoneAnnouncer {
         String legacyMessage = legacySerializer.serialize(message);
         for (Player online : Bukkit.getOnlinePlayers()) {
             online.sendMessage(legacyMessage);
+        }
+    }
+
+    private void reward(Player player, int killCount, List<String> rewards) {
+        if (rewards == null || rewards.isEmpty()) {
+            return;
+        }
+
+        CommandSender console = Bukkit.getConsoleSender();
+        for (String reward : rewards) {
+            if (reward == null || reward.isEmpty()) {
+                continue;
+            }
+            String parsedReward = PlaceholderUtil.parsePlaceholders(player, reward);
+            String filledReward = parsedReward.replace("<killstreak>", String.valueOf(killCount));
+            Bukkit.dispatchCommand(console, filledReward);
         }
     }
 }

@@ -1,12 +1,14 @@
 package com.tcoded.killstreak.config;
 
 import com.tcoded.killstreak.milestone.KillstreakMilestone;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.Map;
+import java.util.Objects;
 
 /**
  * Reads the killstreak milestone section from the plugin configuration.
@@ -26,39 +28,58 @@ public final class KillstreakMilestoneConfigSection {
      */
     public static List<KillstreakMilestone> load(JavaPlugin plugin) {
         FileConfiguration config = plugin.getConfig();
-        List<Map<?, ?>> rawEntries = config.getMapList(PATH);
+        ConfigurationSection section = config.getConfigurationSection(PATH);
+        if (section == null) {
+            return Collections.emptyList();
+        }
+
         List<KillstreakMilestone> milestones = new ArrayList<>();
-        for (Map<?, ?> entry : rawEntries) {
-            KillstreakMilestone milestone = deserialize(entry);
-            if (milestone == null) {
+        for (String key : section.getKeys(false)) {
+            ConfigurationSection entrySection = section.getConfigurationSection(key);
+            KillstreakMilestoneConfigEntry entry = deserialize(key, entrySection);
+            if (entry == null) {
                 continue;
             }
-            milestones.add(milestone);
+            milestones.add(toMilestone(entry));
         }
         return milestones;
     }
 
-    private static KillstreakMilestone deserialize(Map<?, ?> entry) {
-        if (entry == null || entry.isEmpty()) {
+    private static KillstreakMilestoneConfigEntry deserialize(String key, ConfigurationSection section) {
+        if (section == null) {
             return null;
         }
 
-        Object killsObject = entry.get("kills");
-        Object messageObject = entry.get("message");
-        if (!(killsObject instanceof Number) || !(messageObject instanceof String)) {
+        int streak = section.getInt("streak");
+        if (streak <= 0) {
             return null;
         }
 
-        int kills = ((Number) killsObject).intValue();
-        if (kills <= 0) {
+        String message = section.getString("message");
+        if (message == null || message.isEmpty()) {
             return null;
         }
 
-        String message = (String) messageObject;
-        if (message.isEmpty()) {
-            return null;
+        List<String> rewards = section.getStringList("rewards");
+        List<String> cleanedRewards = new ArrayList<>();
+        for (String reward : rewards) {
+            if (reward == null || reward.isEmpty()) {
+                continue;
+            }
+            cleanedRewards.add(reward);
         }
 
-        return new KillstreakMilestone(kills, message);
+        return new KillstreakMilestoneConfigEntry(key, streak, message, cleanedRewards);
+    }
+
+    private static KillstreakMilestone toMilestone(KillstreakMilestoneConfigEntry entry) {
+        List<String> rewards = new ArrayList<>();
+        for (String reward : entry.rewards()) {
+            rewards.add(Objects.requireNonNull(reward));
+        }
+        return new KillstreakMilestone(entry.streak(), entry.message(), Collections.unmodifiableList(rewards));
+    }
+
+    private record KillstreakMilestoneConfigEntry(String key, int streak, String message, List<String> rewards) {
     }
 }
