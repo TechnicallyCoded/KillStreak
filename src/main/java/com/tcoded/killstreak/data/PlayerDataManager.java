@@ -53,7 +53,7 @@ public class PlayerDataManager {
     }
 
     /**
-     * Saves cached data to disk.
+     * Saves cached data to disk using atomic writes to prevent corruption.
      *
      * @param uuid player UUID
      */
@@ -64,7 +64,7 @@ public class PlayerDataManager {
         }
         File file = getFile(uuid);
         try {
-            FileUtil.writeFile(file, PlayerDataSerializer.serialize(data));
+            FileUtil.writeFileAtomic(file, PlayerDataSerializer.serialize(data));
         } catch (IOException e) {
             e.printStackTrace();
         }
