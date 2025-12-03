@@ -48,8 +48,10 @@ public class KillStreak extends JavaPlugin {
     public void onEnable() {
         this.foliaLib = new FoliaLib(this);
         this.dataManager = new PlayerDataManager(getDataFolder());
-        // Save default config
+        // Save default config and reload it to ensure it's loaded into memory
         saveDefaultConfig();
+        reloadConfig();
+
         this.milestoneAnnouncer = new KillstreakMilestoneAnnouncer(KillstreakMilestoneConfigSection.load(this));
 
         PluginManager pm = getServer().getPluginManager();

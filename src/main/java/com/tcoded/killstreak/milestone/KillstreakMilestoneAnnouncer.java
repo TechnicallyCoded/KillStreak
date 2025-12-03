@@ -1,5 +1,6 @@
 package com.tcoded.killstreak.milestone;
 
+import com.tcoded.killstreak.test.TestLogger;
 import com.tcoded.killstreak.util.PlaceholderUtil;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -34,13 +35,17 @@ public class KillstreakMilestoneAnnouncer {
      */
     public void announceIfMilestone(Player player, int killCount) {
         if (milestones.isEmpty()) {
+            TestLogger.logTestEnv("[KillStreak-Milestone] No milestones configured");
             return;
         }
 
+        TestLogger.logTestEnv("[KillStreak-Milestone] Checking milestone for " + player.getName() + " with " + killCount + " kills");
         for (KillstreakMilestone milestone : milestones) {
+            TestLogger.logTestEnv("[KillStreak-Milestone] Comparing: kills=" + milestone.kills() + " vs current=" + killCount);
             if (milestone.kills() != killCount) {
                 continue;
             }
+            TestLogger.logTestEnv("[KillStreak-Milestone] MILESTONE TRIGGERED! Announcing and rewarding...");
             broadcast(player, killCount, milestone.message());
             reward(player, killCount, milestone.rewards());
             return;
@@ -75,6 +80,7 @@ public class KillstreakMilestoneAnnouncer {
             }
             String parsedReward = PlaceholderUtil.parsePlaceholders(player, reward);
             String filledReward = parsedReward.replace("{killstreak}", String.valueOf(killCount));
+            TestLogger.logTestEnv("[KillStreak-Milestone] Executing reward command: " + filledReward);
             Bukkit.dispatchCommand(console, filledReward);
         }
     }

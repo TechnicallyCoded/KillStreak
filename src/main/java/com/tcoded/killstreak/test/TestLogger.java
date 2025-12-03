@@ -27,7 +27,7 @@ public class TestLogger {
         try {
             fileWriter = new FileWriter(logFilePath, false);
             enabled = true;
-            log("TEST LOGGER ENABLED");
+            logTest("TEST LOGGER ENABLED");
             return true;
         } catch (IOException e) {
             logger.severe("Failed to enable test logger: " + e.getMessage());
@@ -41,7 +41,7 @@ public class TestLogger {
     public static synchronized void disable() {
         if (fileWriter != null) {
             try {
-                log("TEST LOGGER DISABLED");
+                logTest("TEST LOGGER DISABLED");
                 fileWriter.close();
                 enabled = false;
             } catch (IOException e) {
@@ -55,10 +55,14 @@ public class TestLogger {
      *
      * @param message the message to log
      */
-    public static synchronized void log(String message) {
+    public static synchronized void logTest(String message) {
         if (!enabled) {
             return;
         }
+        log(message);
+    }
+
+    private static void log(String message) {
         String timestamp = LocalDateTime.now().format(formatter);
         String logMessage = "[" + timestamp + "] " + message;
 
@@ -81,5 +85,17 @@ public class TestLogger {
      */
     public static boolean isEnabled() {
         return enabled;
+    }
+
+    /**
+     * Log a message only when in test environment (-Dtestenv=true).
+     * Will be logged to console if TestLogger is enabled, otherwise will be silently ignored.
+     *
+     * @param message the message to log
+     */
+    public static void logTestEnv(String message) {
+        if ("true".equalsIgnoreCase(System.getProperty("testenv"))) {
+            log(message);
+        }
     }
 }

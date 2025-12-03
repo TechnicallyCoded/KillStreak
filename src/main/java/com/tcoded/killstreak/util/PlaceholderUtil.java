@@ -1,8 +1,10 @@
 package com.tcoded.killstreak.util;
 
+import com.tcoded.killstreak.test.TestLogger;
 import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.PluginManager;
 
 /**
  * Utility for parsing PlaceholderAPI placeholders.
@@ -24,10 +26,13 @@ public final class PlaceholderUtil {
             return "";
         }
 
-        if (!Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+        PluginManager pluginManager = Bukkit.getPluginManager();
+        if (!pluginManager.isPluginEnabled("PlaceholderAPI")) {
             return text;
         }
 
-        return PlaceholderAPI.setPlaceholders(player, text);
+        String result = PlaceholderAPI.setPlaceholders(player, text);
+        TestLogger.logTestEnv("[PlaceholderUtil] Parsed: '" + text + "' -> '" + result + "' (player: " + player.getName() + ")");
+        return result;
     }
 }

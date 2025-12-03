@@ -28,10 +28,13 @@ public final class KillstreakMilestoneConfigSection {
      */
     public static List<KillstreakMilestone> load(JavaPlugin plugin) {
         FileConfiguration config = plugin.getConfig();
+        plugin.getLogger().info("[KillStreak-Config] Loading milestones from config. Config keys: " + config.getKeys(false));
         ConfigurationSection section = config.getConfigurationSection(PATH);
         if (section == null) {
+            plugin.getLogger().info("[KillStreak-Config] Section '" + PATH + "' not found in config!");
             return Collections.emptyList();
         }
+        plugin.getLogger().info("[KillStreak-Config] Found milestone section with keys: " + section.getKeys(false));
 
         List<KillstreakMilestone> milestones = new ArrayList<>();
         for (String key : section.getKeys(false)) {
