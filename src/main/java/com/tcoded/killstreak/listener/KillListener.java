@@ -2,6 +2,7 @@ package com.tcoded.killstreak.listener;
 
 import com.tcoded.killstreak.data.PlayerData;
 import com.tcoded.killstreak.data.PlayerDataManager;
+import com.tcoded.killstreak.milestone.KillstreakMilestoneAnnouncer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -15,12 +16,14 @@ import java.util.UUID;
 public class KillListener implements Listener {
 
     private final PlayerDataManager manager;
+    private final KillstreakMilestoneAnnouncer milestoneAnnouncer;
 
     /**
      * @param manager data manager instance
      */
-    public KillListener(PlayerDataManager manager) {
+    public KillListener(PlayerDataManager manager, KillstreakMilestoneAnnouncer milestoneAnnouncer) {
         this.manager = manager;
+        this.milestoneAnnouncer = milestoneAnnouncer;
     }
 
     /**
@@ -40,7 +43,9 @@ public class KillListener implements Listener {
         if (killer != null) {
             UUID kId = killer.getUniqueId();
             PlayerData killerData = manager.get(kId);
-            killerData.setKills(killerData.getKills() + 1);
+            int newKills = killerData.getKills() + 1;
+            killerData.setKills(newKills);
+            milestoneAnnouncer.announceIfMilestone(killer, newKills);
         }
     }
 }

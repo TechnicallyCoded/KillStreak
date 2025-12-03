@@ -2,9 +2,11 @@ package com.tcoded.killstreak;
 
 import com.tcoded.folialib.FoliaLib;
 import com.tcoded.killstreak.command.KillStreakCommand;
+import com.tcoded.killstreak.config.KillstreakMilestoneConfigSection;
 import com.tcoded.killstreak.data.PlayerDataManager;
 import com.tcoded.killstreak.listener.KillListener;
 import com.tcoded.killstreak.listener.PlayerConnectionListener;
+import com.tcoded.killstreak.milestone.KillstreakMilestoneAnnouncer;
 import com.tcoded.killstreak.placeholder.KillStreakExpansion;
 import com.tcoded.killstreak.test.SelfTestCommand;
 import org.bukkit.event.HandlerList;
@@ -19,6 +21,7 @@ public class KillStreak extends JavaPlugin {
     private FoliaLib foliaLib;
     private PlayerDataManager dataManager;
     private KillStreakExpansion expansion;
+    private KillstreakMilestoneAnnouncer milestoneAnnouncer;
 
     /**
      * @return FoliaLib instance for scheduling tasks
@@ -34,15 +37,25 @@ public class KillStreak extends JavaPlugin {
         return dataManager;
     }
 
+    /**
+     * @return milestone announcer
+     */
+    public KillstreakMilestoneAnnouncer getMilestoneAnnouncer() {
+        return milestoneAnnouncer;
+    }
+
     @Override
     public void onEnable() {
         this.foliaLib = new FoliaLib(this);
         this.dataManager = new PlayerDataManager(getDataFolder());
-        // Save default config
+        // Save default config and reload it to ensure it's loaded into memory
         saveDefaultConfig();
+        reloadConfig();
+
+        this.milestoneAnnouncer = new KillstreakMilestoneAnnouncer(KillstreakMilestoneConfigSection.load(this));
 
         PluginManager pm = getServer().getPluginManager();
-        pm.registerEvents(new KillListener(dataManager), this);
+        pm.registerEvents(new KillListener(dataManager, milestoneAnnouncer), this);
         pm.registerEvents(new PlayerConnectionListener(this, dataManager), this);
         // Register /ks command
         this.getCommand("ks").setExecutor(new KillStreakCommand(this));
